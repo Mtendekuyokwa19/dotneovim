@@ -11,7 +11,21 @@ return {
 
           ["core.defaults"] = {},
 
+          ["core.esupports.metagen"] = {},
+          ["core.dirman"] = {
+            config = {
+              workspaces = {
+                my_ws = "~/neorg", -- Format: <name_of_workspace> = <path_to_workspace_root>
+                my_other_notes = "~/work/notes",
+              },
+              index = "index.norg", -- The name of the main (root) .norg file
+            }
+          },
           ["core.keybinds"] = {},
+
+          ["core.summary"] = {},
+
+          ["core.journal"] = {},
           ["core.concealer"] = {
             config = {                -- We added a `config` table!
               icon_preset = "varied", -- And we set our option here.
