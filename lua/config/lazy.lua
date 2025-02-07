@@ -20,7 +20,6 @@ require("lazy").setup({
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
     -- import/override with your plugins
     { import = "plugins" },
-    { import = "lazyvim.plugins.extras.formatting.prettier" },
   },
   defaults = {
     -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
@@ -31,7 +30,7 @@ require("lazy").setup({
     version = false, -- always use the latest git commit
     -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  install = { colorscheme = { "catppuccin/nvim", name = "catppuccin", priority = 1000 } },
+  install = { colorscheme = { "tokyonight", "habamax" } },
   checker = {
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update
@@ -48,36 +47,6 @@ require("lazy").setup({
         "tohtml",
         "tutor",
         "zipPlugin",
-      },
-    },
-  },
-})
-local lspconfig = require("lspconfig")
-local configs = require("lspconfig/configs")
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-lspconfig.emmet_ls.setup({
-  -- on_attach = on_attach,
-  capabilities = capabilities,
-  filetypes = {
-    "css",
-    "eruby",
-    "html",
-    "javascript",
-    "javascriptreact",
-    "less",
-    "sass",
-    "scss",
-    "svelte",
-    "pug",
-    "typescriptreact",
-    "vue",
-  },
-  init_options = {
-    html = {
-      options = {
-        -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
-        ["bem.enabled"] = true,
       },
     },
   },
