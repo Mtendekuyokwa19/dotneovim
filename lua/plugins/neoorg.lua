@@ -16,7 +16,7 @@ return {
             config = {
               workspaces = {
                 my_ws = "~/neorg", -- Format: <name_of_workspace> = <path_to_workspace_root>
-                my_other_notes = "~/work/notes",
+                notes = "~/Desktop/dumbnotes/"
               },
               index = "index.norg", -- The name of the main (root) .norg file
             }
@@ -25,6 +25,7 @@ return {
 
           ["core.summary"] = {},
 
+          ["core.ui.calendar"] = {},
           ["core.journal"] = {},
           ["core.concealer"] = {
             config = {                -- We added a `config` table!
