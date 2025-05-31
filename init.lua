@@ -1,4 +1,6 @@
 require("config.lazy")
+      vim.cmd("set ignorecase smartcase")
+      vim.cmd("set ruler ")
 require("neo-tree").setup({
   close_if_last_window = true,  -- Close if NeoTree is the last window
   auto_open = false,            -- Disable auto-open on startup
@@ -48,8 +50,6 @@ vim.keymap.set("i", "{", "{}<Left>")
 
 --escaping the terminal--
 vim.keymap.set('t', '<Esc><Esc>', [[<C-\><C-n>]])
--- use a release tag to download pre-built binaries
-
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
@@ -161,3 +161,86 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 
+vim.keymap.set('t', '<leader>n', [[<C-\><C-n>]], { noremap = true })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { noremap = true })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { noremap = true })
+vim.keymap.set('n', '<C-h>', '<C-w>h', { noremap = true })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { noremap = true })
+vim.keymap.set('n', '<leader>t', ':belowright split | terminal<CR>', { noremap = true, silent = true ,desc='open terminal bottom'})
+vim.keymap.set('n', '<leader>s', ':vsplit <CR><C-w>l', { noremap = true, silent = true, desc='split pane'})
+vim.keymap.set('n', '<leader>l', ':source $MYVIMRC <CR>', { noremap = true, silent = true ,desc='source my vim'})
+vim.keymap.set('n', '<leader>m', function()
+  local marks_output = vim.fn.execute('marks')
+  local lines = vim.split(marks_output, '\n')
+
+  -- Filter out header lines and invalid marks
+  local mark_lines = {}
+  for _, line in ipairs(lines) do
+    if line:match("^ [a-zA-Z]") then
+      table.insert(mark_lines, line)
+    end
+  end
+
+  -- Handle the case where there are no valid marks
+  if #mark_lines == 0 then
+    vim.notify("No marks found.", vim.log.levels.INFO)
+    return
+  end
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, mark_lines)
+
+  local width = math.max(40, math.floor(vim.o.columns * 0.5))
+  local height = math.min(#mark_lines, 20)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+  })
+
+  -- Make buffer non-editable
+  vim.bo[buf].modifiable = false
+  vim.bo[buf].bufhidden = 'wipe'
+
+  -- Set keymap to jump to mark on <Enter>
+  vim.keymap.set('n', '<CR>', function()
+    local lnum = vim.fn.line('.')
+    local line = vim.api.nvim_buf_get_lines(buf, lnum - 1, lnum, false)[1]
+    local mark = line:match("^ ([a-zA-Z])")
+
+    if mark then
+      vim.api.nvim_win_close(win, true)
+      vim.cmd("normal! `" .. mark)
+    end
+  end, { buffer = buf })
+
+  -- Close on <Esc>
+  vim.keymap.set('n', '<Esc>', function()
+    vim.api.nvim_win_close(win, true)
+  end, { buffer = buf })
+end, { noremap = true, silent = true,desc="st.marks windows" })
+
+
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = { "*.jsx", "*.tsx","*.ts","*.js" },
+  callback = function()
+    vim.keymap.set("n", "<leader>rf", "0i export function vim(){<CR> return<section></section> <CR>}<ESC> 2k ", { buffer = true, desc = "react function" })
+  end,
+})
+
+
+
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = "*.mdx",
+  callback = function()
+    vim.bo.filetype = "markdown"
+  end,
+  desc = "Set filetype to markdown for .mdx files",
+})
