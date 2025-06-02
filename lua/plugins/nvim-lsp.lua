@@ -52,6 +52,30 @@ return {
         single_file_support = false,
         on_attach = function(client, bufnr)
           vim.notify("Godot LSP connected to " .. vim.fn.expand('%:t'), vim.log.levels.INFO)
+          
+          -- LSP keybindings for Godot
+          local opts = { buffer = bufnr }
+          
+          -- Navigation
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+          vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
+          
+          -- Add a keymap to jump back from definition
+          vim.keymap.set('n', '<leader>gb', '<C-o>', { buffer = bufnr, desc = 'Jump back from definition' })
+          
+          -- Code actions
+          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+          vim.keymap.set('n', '<leader>cf', function()
+            vim.lsp.buf.code_action({
+              context = {
+                only = { 'quickfix', 'refactor', 'source.fixAll' },
+                diagnostics = {},
+              },
+            })
+          end, opts)
         end,
         settings = {},
       })
@@ -72,6 +96,45 @@ return {
               arguments = { vim.fn.expand('%:p') }
             })
           end, { buffer = buf, desc = 'Run current scene in Godot' })
+        end,
+      })
+
+      -- General LSP keybindings for all filetypes
+      vim.api.nvim_create_autocmd('LspAttach', {
+        callback = function(args)
+          local bufnr = args.buf
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          
+          -- General LSP keybindings
+          local opts = { buffer = bufnr }
+          
+          -- Navigation
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+          vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
+          
+          -- Add a keymap to jump back from definition
+          vim.keymap.set('n', '<leader>gb', '<C-o>', { buffer = bufnr, desc = 'Jump back from definition' })
+          
+          -- Code actions
+          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+          vim.keymap.set('n', '<leader>cf', function()
+            vim.lsp.buf.code_action({
+              context = {
+                only = { 'quickfix', 'refactor', 'source.fixAll' },
+                diagnostics = {},
+              },
+            })
+          end, opts)
+          
+          -- Rename
+          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+          
+          -- Signature help
+          vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, opts)
         end,
       })
     end,
