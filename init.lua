@@ -1220,7 +1220,6 @@ require('lazy').setup({
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.oil',
-  require 'kickstart.plugins.llamatsk',
   require 'kickstart.plugins.colorscheme',
   require 'kickstart.plugins.git-graph',
   require 'kickstart.plugins.orgmode',
