@@ -1,4 +1,3 @@
-# Mtende's config
+# Mtende's  old config
 
-- Migrated to nix will update this
-- will add nix
+NoTe: I migrated these to my [ deathtotheworld repo](https://github.com/Mtendekuyokwa19/deathtotheworld)
